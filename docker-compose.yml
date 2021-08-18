@@ -1,0 +1,9 @@
+version: "3.7"
+services:
+  intership_task_app:
+    build: ./app
+    restart: always
+    volumes:
+        - "./app:/app"
+    ports:
+        - "5001:5001"
