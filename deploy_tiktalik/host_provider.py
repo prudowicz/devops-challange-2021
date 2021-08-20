@@ -1,6 +1,7 @@
 import os
 import string
 import random
+import time
 
 from dotenv import load_dotenv, find_dotenv
 from tiktalik.computing import ComputingConnection
@@ -11,6 +12,32 @@ from tiktalik.computing import ComputingConnection
 DEFAULT_PREFIX = "def-prefix-"
 DEFAULT_INSTANCE_SIZE = "1u"
 DEFAULT_DISK_SIZE = 20
+DEFAULT_TRY_TO_REMOVE_ATTEMPTS = 5
+DEFAULT_PAUSE_BEFORE_REMOVE_SECONDS = 30
+
+
+
+def create_new_alpine_instance(new_instance_name: str):
+    conn = get_connection_object()
+    target_image = get_alpine_image_uuid_name_dict()
+    new_instance_size = get_new_instance_size()
+    networks = [ conn.list_networks()[0].uuid ]
+    new_instance_disk_size = get_disk_size()
+    res = conn.create_instance(new_instance_name, 
+        new_instance_size, 
+        target_image["uuid"], 
+        networks, 
+        disk_size_gb=new_instance_disk_size
+    )
+    to_ret = {}
+    to_ret["ip"] = res["interfaces"][0]["ip"]
+    to_ret["hostname"] = res["hostname"]
+    to_ret["default_password"] = res["default_password"]
+    to_ret["gross_cost_per_hour"] = res["gross_cost_per_hour"]
+    to_ret["image_name"] = target_image["name"]
+    to_ret["uuid"] = res["uuid"]
+    return to_ret
+
 
 def get_api_keys():
     load_dotenv(find_dotenv())
@@ -31,16 +58,6 @@ def get_host_instances():
     conn = get_connection_object()
     return conn.list_instances()
 
-def create_new_alpine_instance(new_instance_name: str):
-    conn = get_connection_object()
-    target_image = get_alpine_image_uuid_name_dict()
-    new_instance_size = get_new_instance_size()
-    networks = [ conn.list_networks()[0].uuid ]
-    new_instance_disk_size = get_disk_size()
-    conn.create_instance(new_instance_name, new_instance_size, target_image["uuid"], networks, disk_size_gb=new_instance_disk_size)
-
-def get_public_network_instance():
-    pass
 
 def get_new_instance_size():
     size = DEFAULT_INSTANCE_SIZE
@@ -109,6 +126,34 @@ def get_alpine_image_uuid_name_dict() -> dict:
         "uuid": alpine_images[-1].uuid,
         "name": alpine_images[-1].name
         }
+
+def remove_instance(uuid: str):
+    conn = get_connection_object()
+    for i in range(0, DEFAULT_TRY_TO_REMOVE_ATTEMPTS):
+        instance_status = is_instance_running(uuid)
+        if instance_status:
+            conn.delete_instance(uuid)
+            return
+        else:
+            time.sleep(DEFAULT_PAUSE_BEFORE_REMOVE_SECONDS)
+    raise InstanceOperationTimeoutException("Remove operation on instance uuid: " + str(uuid) +\
+        "did not suceed with " + str(DEFAULT_TRY_TO_REMOVE_ATTEMPTS) + " attemps " +\
+        "and timeout " + str(DEFAULT_PAUSE_BEFORE_REMOVE_SECONDS) + "s beetwen each attempt")
+
+
+def is_instance_running(uuid: str):
+    instances = get_host_instances()
+    for i in instances:
+        if i.uuid == uuid:
+            return i.running
+    raise NoInstanceWithGivenUUID("No instance with given uuid: " + str(uuid))
+
+
+class NoInstanceWithGivenUUIDException(Exception):
+    pass
+
+class InstanceOperationTimeoutException(Exception):
+    pass
 
 
 if __name__ == "__main__":

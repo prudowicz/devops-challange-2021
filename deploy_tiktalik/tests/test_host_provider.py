@@ -1,5 +1,7 @@
 import sys
 import os
+import pprint, io
+
 from tiktalik.computing.objects import Instance
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
@@ -44,7 +46,15 @@ def test_get_alpine_image():
     assert "alpine linux" in img["name"].lower()
     assert len(img["uuid"]) > 15
 
-def test_create_new_alpine_instance():
+def test_create_remove_new_alpine_instance():
     test_instance_name = get_new_instance_name(TEST_PREFIX)
-    create_new_alpine_instance(test_instance_name)
-    print("Created instance with hostname: " + str(test_instance_name))
+    res = create_new_alpine_instance(test_instance_name)
+    res_keys = list(res.keys())
+    assert "uuid" in res_keys
+    assert "ip" in res_keys
+    assert "default_password" in res_keys
+    assert "hostname" in res_keys
+    pretty_res = io.StringIO()
+    pprint.pprint(res, pretty_res)
+    # print("Created instance with params:\n" + pretty_res.getvalue())
+    remove_instance(res["uuid"])
