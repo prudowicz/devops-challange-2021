@@ -13,11 +13,11 @@ DEFAULT_REPO_TO_DEPLOY = "https://github.com/prudowicz/devops-challange-2021"
 
 def get_repo_to_deploy():
     repo_to_deploy = DEFAULT_REPO_TO_DEPLOY
-    try:
-        load_dotenv(find_dotenv())
-        repo_to_deploy = os.environ["REPO_TO_DEPLOY"]
-    except KeyError:
-        pass
+    # try:
+    #     load_dotenv(find_dotenv())
+    #     repo_to_deploy = os.environ["REPO_TO_DEPLOY"]
+    # except KeyError:
+    #     pass
     return repo_to_deploy
 
 

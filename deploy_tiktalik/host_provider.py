@@ -10,7 +10,7 @@ from tiktalik.computing import ComputingConnection
 #     return os.path.abspath(__file__)
 
 DEFAULT_PREFIX = "def-prefix-"
-DEFAULT_INSTANCE_SIZE = "1u"
+DEFAULT_INSTANCE_SIZE = "1s"
 DEFAULT_DISK_SIZE = 20
 DEFAULT_TRY_TO_REMOVE_ATTEMPTS = 5
 DEFAULT_PAUSE_BEFORE_REMOVE_SECONDS = 30
