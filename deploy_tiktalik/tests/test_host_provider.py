@@ -56,5 +56,6 @@ def test_create_remove_new_alpine_instance():
     assert "hostname" in res_keys
     pretty_res = io.StringIO()
     pprint.pprint(res, pretty_res)
-    # print("Created instance with params:\n" + pretty_res.getvalue())
+    print("Created instance with params:\n" + pretty_res.getvalue())
     remove_instance(res["uuid"])
+    print("Removed instance with uuid: " + str(res["uuid"]))

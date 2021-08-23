@@ -129,11 +129,15 @@ def get_alpine_image_uuid_name_dict() -> dict:
 
 def remove_instance(uuid: str):
     conn = get_connection_object()
+    wait_for_instance_running(uuid)
+    conn.delete_instance(uuid)
+    
+
+def wait_for_instance_running(uuid: str):
     for i in range(0, DEFAULT_TRY_TO_REMOVE_ATTEMPTS):
         instance_status = is_instance_running(uuid)
         if instance_status:
-            conn.delete_instance(uuid)
-            return
+            return True
         else:
             time.sleep(DEFAULT_PAUSE_BEFORE_REMOVE_SECONDS)
     raise InstanceOperationTimeoutException("Remove operation on instance uuid: " + str(uuid) +\
@@ -146,7 +150,7 @@ def is_instance_running(uuid: str):
     for i in instances:
         if i.uuid == uuid:
             return i.running
-    raise NoInstanceWithGivenUUID("No instance with given uuid: " + str(uuid))
+    raise NoInstanceWithGivenUUIDException("No instance with given uuid: " + str(uuid))
 
 
 class NoInstanceWithGivenUUIDException(Exception):
