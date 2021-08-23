@@ -41,8 +41,11 @@ def create_new_alpine_instance(new_instance_name: str):
 
 def get_api_keys():
     load_dotenv(find_dotenv())
-    api_key = os.environ.get("TIKTALIK_API_KEY")
-    secret_key = os.environ.get("TIKTALIK_API_SECRET")
+    try:
+        api_key = os.environ["TIKTALIK_API_KEY"]
+        secret_key = os.environ["TIKTALIK_API_SECRET"]
+    except KeyError:
+        raise Exception("No api keys provided in .env file")
     return {
         "api_key": api_key,
         "secret_key": secret_key

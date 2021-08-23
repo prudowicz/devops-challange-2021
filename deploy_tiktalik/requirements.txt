@@ -2,3 +2,4 @@ pytest
 tiktalik
 python-dotenv
 paramiko
+requests

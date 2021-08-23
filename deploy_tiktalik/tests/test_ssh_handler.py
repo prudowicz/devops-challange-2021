@@ -23,7 +23,7 @@ def ssh_handler():
     handler.connect()
     if handler.is_first_login():
         handler.handle_first_login_password_change()
-    print("Connected with ssh to " + str(instance_result["ip"]) + ":" + str(handler.port))
+    print("Connected with ssh to " + str(handler.ip_address) + ":" + str(handler.port))
     yield handler
     handler.close()
     remove_instance(instance_result["uuid"])
@@ -70,4 +70,4 @@ def test_clone_repo(ssh_handler):
     repo_dir = repo_url.split("/")[-1]
     print(repo_dir)
     response = ssh_handler.execute_command("cd " + repo_dir)
-    assert response
+    assert response.exit_status == 0

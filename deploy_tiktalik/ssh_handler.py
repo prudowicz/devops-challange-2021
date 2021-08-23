@@ -28,7 +28,7 @@ class SSHHandler(object):
                     timeout=30
                 )
                 break
-            except paramiko.ssh_exception.NoValidConnectionsError:
+            except Exception:
                 print("Connection error, trying again in " + str(DEFAULT_PAUSE_BEFORE_REMOVE_SECONDS) + " seconds...")
                 time.sleep(DEFAULT_PAUSE_BEFORE_REMOVE_SECONDS)
 
@@ -85,8 +85,6 @@ class SSHHandler(object):
     def check_is_package_installed(self, package_name: str) -> bool:
         pass
 
-            
-
 
 class CommandResponse(object):
     def __init__(self, stdin, stdout, stderr):
@@ -103,7 +101,7 @@ class AlpineSSHHandler(SSHHandler):
     def is_first_login(self):
         self._shell_obj = self._client.invoke_shell()
         out = self._get_last_line_from__shell_object()
-        print(out)
+        # print(out)
         if "New password:" in out:
             return True
 
@@ -111,7 +109,7 @@ class AlpineSSHHandler(SSHHandler):
         new_password = self.password + TO_APPEND_TO_DEFAULT_PASSWORD
         self._shell_obj.send(new_password+'\n')
         out = self._get_last_line_from__shell_object()
-        print(out)
+        # print(out)
         if "Retype new password" in out:
             self._shell_obj.send(new_password+'\n')
         self.close()
