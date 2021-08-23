@@ -16,9 +16,29 @@ DEFAULT_TRY_TO_REMOVE_ATTEMPTS = 5
 DEFAULT_PAUSE_BEFORE_REMOVE_SECONDS = 30
 
 
+def get_api_keys():
+    load_dotenv(find_dotenv())
+    try:
+        api_key = os.environ["TIKTALIK_API_KEY"]
+        secret_key = os.environ["TIKTALIK_API_SECRET"]
+    except KeyError:
+        raise Exception("No api keys provided in .env file")
+    return {
+        "api_key": api_key,
+        "secret_key": secret_key
+        }
+
+
+def get_connection_object():
+    api_keys = get_api_keys()
+    conn = ComputingConnection(api_keys["api_key"], api_keys["secret_key"])
+    return conn
+
+conn = get_connection_object()
+
 
 def create_new_alpine_instance(new_instance_name: str):
-    conn = get_connection_object()
+    # conn = get_connection_object()
     target_image = get_alpine_image_uuid_name_dict()
     new_instance_size = get_new_instance_size()
     networks = [ conn.list_networks()[0].uuid ]
@@ -39,26 +59,9 @@ def create_new_alpine_instance(new_instance_name: str):
     return to_ret
 
 
-def get_api_keys():
-    load_dotenv(find_dotenv())
-    try:
-        api_key = os.environ["TIKTALIK_API_KEY"]
-        secret_key = os.environ["TIKTALIK_API_SECRET"]
-    except KeyError:
-        raise Exception("No api keys provided in .env file")
-    return {
-        "api_key": api_key,
-        "secret_key": secret_key
-        }
-
-def get_connection_object():
-    api_keys = get_api_keys()
-    conn = ComputingConnection(api_keys["api_key"], api_keys["secret_key"])
-    return conn
-
 
 def get_host_instances():
-    conn = get_connection_object()
+    # conn = get_connection_object()
     return conn.list_instances()
 
 
@@ -120,7 +123,7 @@ def get_random_string_for_hostname():
     return ''.join(random.choice(letters) for i in range(length))
 
 def get_alpine_image_uuid_name_dict() -> dict:
-    conn = get_connection_object()
+    # conn = get_connection_object()
     alpine_images = []
     for image in conn.list_images():
         if "Alpine Linux" in image.name:
@@ -131,7 +134,7 @@ def get_alpine_image_uuid_name_dict() -> dict:
         }
 
 def remove_instance(uuid: str):
-    conn = get_connection_object()
+    # conn = get_connection_object()
     wait_for_instance_running(uuid)
     conn.delete_instance(uuid)
     
