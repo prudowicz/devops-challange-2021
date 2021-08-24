@@ -1,3 +1,16 @@
+This is my solution for task at **DevOps Internship Challenge 2021**
+
+For build and start app on local host please ensure you have installed and running *docker* and *docker-compose* on your machine. Then clone this repo, cd to repo directory, and execute
+``
+docker-compose build
+docker-compose up -d
+``
+
+For automated deploy i've used tiktalik service and it's api [tiktalik.com](https://tiktalik.com/)
+
+Python3 script `./deploy_tiktalik/deploy.py` need at least two environmental variable which is  
+`TIKTALIK_API_KEY` and `TIKTALIK_API_SECRET`. This should be written in file `./deploy_tiktalik/.env`  
+Keys for tiktalik could be found at your tiktalik account. Please be aware that you need some funds on your account for using deploy script.     
 # DevOps Internship Challenge 2021
 
 Build and deploy application from **app** folder. Use whatever service or platform you want (AWS, Azure, GCP, bare metal and so on). Most of them have free tier option.
