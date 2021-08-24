@@ -1,6 +1,6 @@
 This is my solution for task at **DevOps Internship Challenge 2021**
 
-For build and start app on local host please ensure you have installed and running *docker* and *docker-compose* on your machine. Then clone this repo, cd to repo directory, and execute
+For build and start app on local host please ensure you have installed and running *docker* and *docker-compose* on your machine. Then clone this repo, cd to repo directory, and execute  
 `docker-compose build`  
 `docker-compose up -d`
 
